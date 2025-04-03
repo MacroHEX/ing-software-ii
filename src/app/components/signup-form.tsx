@@ -3,6 +3,7 @@
 import {ComponentProps, FormEvent, useState} from 'react'
 
 import Image from 'next/image'
+import Link from "next/link";
 import {useRouter} from 'next/navigation'
 
 import {cn} from "@/lib/utils"
@@ -157,9 +158,9 @@ export function SignupForm({
 
               <div className="text-center text-sm">
                 ¿Ya tienes una cuenta?&nbsp;
-                <a href="/login" className="underline underline-offset-4">
+                <Link href={'/login'} className="underline underline-offset-4">
                   Inicia sesión
-                </a>
+                </Link>
               </div>
             </div>
           </form>

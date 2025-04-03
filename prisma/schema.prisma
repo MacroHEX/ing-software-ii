@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Rol {
+  rolid     Int    @id @default(autoincrement())
+  nombrerol String
+
+  usuarios Usuario[]
+}
+
+model Usuario {
+  usuarioid     Int    @id @default(autoincrement())
+  nombre        String
+  apellido      String
+  nombreusuario String @unique
+  correo        String @unique
+  password      String
+  rolid         Int
+  rol           Rol    @relation(fields: [rolid], references: [rolid])
+
+  inscripciones Inscripcion[]
+  organizador   Organizador[]
+}
+
+model TipoEvento {
+  tipoeventoid Int    @id @default(autoincrement())
+  descripcion  String
+
+  eventos Evento[]
+}
+
+model Evento {
+  eventoid     Int        @id @default(autoincrement())
+  nombre       String
+  fecha        DateTime
+  ubicacion    String
+  tipoeventoid Int
+  tipoevento   TipoEvento @relation(fields: [tipoeventoid], references: [tipoeventoid])
+
+  inscripciones Inscripcion[]
+  organizadores Organizador[]
+}
+
+model Inscripcion {
+  inscripcionid    Int      @id @default(autoincrement())
+  usuarioid        Int
+  eventoid         Int
+  fechainscripcion DateTime @default(now())
+
+  usuario Usuario @relation(fields: [usuarioid], references: [usuarioid])
+  evento  Evento  @relation(fields: [eventoid], references: [eventoid])
+}
+
+model Organizador {
+  organizadorid Int @id @default(autoincrement())
+  usuarioid     Int
+  eventoid      Int
+
+  usuario Usuario @relation(fields: [usuarioid], references: [usuarioid])
+  evento  Evento  @relation(fields: [eventoid], references: [eventoid])
+
+  @@unique([usuarioid, eventoid]) // índice compuesto único
+}

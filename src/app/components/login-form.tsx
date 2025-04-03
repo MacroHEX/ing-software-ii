@@ -1,7 +1,8 @@
 'use client'
 
-import {useState, ComponentProps, FormEvent} from 'react'
+import {ComponentProps, FormEvent, useState} from 'react'
 
+import Link from "next/link";
 import Image from 'next/image'
 import {useRouter} from 'next/navigation'
 
@@ -21,35 +22,39 @@ export function LoginForm({
 }) {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState<boolean>(false)
   const [error, setError] = useState('')
   const router = useRouter()
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
+    setLoading(true)
 
-    const body = {
+    try {
+      // Hacer el POST a la API de login
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({username, password})
+      })
 
+      const data = await response.json()
+
+      if (response.ok) {
+        // Si la respuesta es exitosa, guardar el token en localStorage
+        localStorage.setItem('token', data.token)
+
+        // Redirigir a la página principal
+        router.push('/')
+      } else {
+        setError(data.message || 'Ocurrió un error en el login')
+      }
+    } catch {
+      setError('Ocurrió un error en el login')
+    } finally {
+      setLoading(false)
     }
 
-    // Hacer el POST a la API de login
-    const response = await fetch('/api/auth', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({username, password})
-    })
-
-    const data = await response.json()
-
-    if (response.ok) {
-      // Si la respuesta es exitosa, guardar el token en localStorage
-      localStorage.setItem('token', data.token)
-
-      // Redirigir a la página principal
-      router.push('/')
-    } else {
-      // Si ocurre un error, mostrarlo
-      setError(data.message || 'Ocurrió un error en el login')
-    }
   }
 
   return (
@@ -89,8 +94,8 @@ export function LoginForm({
                   required
                 />
               </div>
-              <Button type="submit" className="w-full">
-                Login
+              <Button disabled={loading} type="submit" className="w-full">
+                Iniciar Sesión
               </Button>
 
               {error && (
@@ -101,9 +106,9 @@ export function LoginForm({
 
               <div className="text-center text-sm">
                 ¿No tienes una cuenta?&nbsp;
-                <a href="#" className="underline underline-offset-4">
+                <Link className="underline underline-offset-4" href={'/signup'}>
                   Regístrate
-                </a>
+                </Link>
               </div>
             </div>
           </form>

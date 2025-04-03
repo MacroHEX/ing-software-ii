@@ -1,10 +1,16 @@
-import {cn} from "@/lib/utils"
-import {Button} from "@/components/ui/button";
-import {Card, CardContent} from "@/components/ui/card";
-import {Input} from "@/components/ui/input";
-import {Label} from "@/components/ui/label";
+'use client'
+
+import {useState, ComponentProps, FormEvent} from 'react'
+
 import Image from 'next/image'
-import {ComponentProps} from "react";
+import {useRouter} from 'next/navigation'
+
+import {cn} from "@/lib/utils"
+
+import {Button} from "@/components/ui/button"
+import {Card, CardContent} from "@/components/ui/card"
+import {Input} from "@/components/ui/input"
+import {Label} from "@/components/ui/label"
 
 export function LoginForm({
                             className,
@@ -13,11 +19,47 @@ export function LoginForm({
                           }: ComponentProps<"div"> & {
   imageUrl?: string;
 }) {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const router = useRouter()
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault()
+
+    const body = {
+
+    }
+
+    // Hacer el POST a la API de login
+    const response = await fetch('/api/auth', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username, password})
+    })
+
+    const data = await response.json()
+
+    if (response.ok) {
+      // Si la respuesta es exitosa, guardar el token en localStorage
+      localStorage.setItem('token', data.token)
+
+      // Redirigir a la página principal
+      router.push('/')
+    } else {
+      // Si ocurre un error, mostrarlo
+      setError(data.message || 'Ocurrió un error en el login')
+    }
+  }
+
   return (
     <div className={cn("flex flex-col gap-6 h-full", className)} {...props}>
       <Card className="overflow-hidden p-0 h-full">
         <CardContent className="grid p-0 md:grid-cols-2 h-full">
-          <form className="p-6 md:p-8 h-full flex flex-col justify-between">
+          <form
+            className="p-6 md:p-8 h-full flex flex-col justify-between"
+            onSubmit={handleSubmit}
+          >
             <div className="flex flex-col gap-6">
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Bienvenido</h1>
@@ -26,34 +68,41 @@ export function LoginForm({
                 </p>
               </div>
               <div className="grid gap-3">
-                <Label htmlFor="email">Usuario o Correo</Label>
+                <Label htmlFor="login">Usuario o Correo</Label>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  id="login"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                   required
                 />
               </div>
               <div className="grid gap-3">
                 <div className="flex items-center">
                   <Label htmlFor="password">Contraseña</Label>
-                  <a
-                    href="#"
-                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                  >
-                    ¿Olvidaste tu contraseña?
-                  </a>
                 </div>
-                <Input id="password" type="password" required/>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
               </div>
               <Button type="submit" className="w-full">
                 Login
               </Button>
 
+              {error && (
+                <div className="text-red-500 text-center mt-2">
+                  {error}
+                </div>
+              )}
+
               <div className="text-center text-sm">
                 ¿No tienes una cuenta?&nbsp;
                 <a href="#" className="underline underline-offset-4">
-                   Registrate
+                  Regístrate
                 </a>
               </div>
             </div>
@@ -71,5 +120,5 @@ export function LoginForm({
         </CardContent>
       </Card>
     </div>
-  );
+  )
 }

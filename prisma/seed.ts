@@ -17,6 +17,19 @@ async function main() {
     })
   }
 
+  // Crear el rol "Usuario" si no existe
+  let rolUser = await prisma.rol.findFirst({
+    where: {nombrerol: 'Usuario'},
+  })
+
+  if (!rolUser) {
+    rolUser = await prisma.rol.create({
+      data: {
+        nombrerol: 'Usuario',
+      },
+    })
+  }
+
   // Hashear la contraseña "admin"
   const hashedPassword = await bcrypt.hash('admin', 10)
 

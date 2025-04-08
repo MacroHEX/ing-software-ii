@@ -57,22 +57,25 @@ export async function PUT(req: Request) {
   try {
     const {usuarioid, nombre, apellido, nombreusuario, correo, password, rolid}: Usuario = await req.json();
 
-    let updatedPassword = password;
+    // Si la contraseña no está vacía, la hasheamos
+    const updatedData: any = {
+      nombre,
+      apellido,
+      nombreusuario,
+      correo,
+      rolid,
+    };
+
+    // Solo actualizamos la contraseña si no está vacía
     if (password) {
-      updatedPassword = await hashPassword(password);
+      updatedData.password = await hashPassword(password); // Hasheamos y actualizamos la contraseña
     }
 
     const usuarioActualizado = await prisma.usuario.update({
       where: {usuarioid},
-      data: {
-        nombre,
-        apellido,
-        nombreusuario,
-        correo,
-        password: updatedPassword, // Actualizamos la contraseña hasheada
-        rolid,
-      },
+      data: updatedData,
     });
+
     return NextResponse.json(usuarioActualizado);
   } catch (error) {
     return NextResponse.json({error: 'Error updating user'}, {status: 500});

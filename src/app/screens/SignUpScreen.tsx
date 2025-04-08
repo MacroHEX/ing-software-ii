@@ -1,25 +1,22 @@
 'use client'
 
 import {ComponentProps, FormEvent, useState} from 'react'
-
 import Image from 'next/image'
 import Link from "next/link";
 import {useRouter} from 'next/navigation'
-
 import {cn} from "@/lib/utils"
-
 import {Button} from "@/components/ui/button"
 import {Card, CardContent} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 
-export function SignupForm({
-                             className,
-                             imageUrl,
-                             ...props
-                           }: ComponentProps<"div"> & {
+const SignUpScreen = ({
+                        className,
+                        imageUrl,
+                        ...props
+                      }: ComponentProps<"div"> & {
   imageUrl?: string;
-}) {
+}) => {
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -42,8 +39,8 @@ export function SignupForm({
     }
 
     try {
-      // Hacer el POST a la API de signup
-      const response = await fetch('/api/auth/signup', {
+      // Hacer el POST a la API de usuarios
+      const response = await fetch('/api/users', {
         method: 'POST',
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(body),
@@ -66,7 +63,7 @@ export function SignupForm({
           localStorage.setItem('token', loginData.token)
 
           // Redirigir a la página principal
-          router.push('/')
+          router.push('/splash')
         } else {
           setError(loginData.message || 'Ocurrió un error en el login')
         }
@@ -85,6 +82,18 @@ export function SignupForm({
     <div className={cn("flex flex-col gap-6 h-full", className)} {...props}>
       <Card className="overflow-hidden p-0 h-full">
         <CardContent className="grid p-0 md:grid-cols-2 h-full">
+
+          <div className="bg-primary/50 relative hidden md:block">
+            {imageUrl && (
+              <Image
+                fill
+                src={imageUrl}
+                alt="Image"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            )}
+          </div>
+
           <form
             className="p-6 md:p-8 h-full flex flex-col justify-between"
             onSubmit={handleSubmit}
@@ -164,18 +173,10 @@ export function SignupForm({
               </div>
             </div>
           </form>
-          <div className="bg-primary/50 relative hidden md:block">
-            {imageUrl && (
-              <Image
-                fill
-                src={imageUrl}
-                alt="Image"
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            )}
-          </div>
         </CardContent>
       </Card>
     </div>
   )
 }
+
+export default SignUpScreen;

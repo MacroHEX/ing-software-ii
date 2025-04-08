@@ -13,13 +13,13 @@ import {Card, CardContent} from "@/components/ui/card"
 import {Input} from "@/components/ui/input"
 import {Label} from "@/components/ui/label"
 
-export function LoginForm({
-                            className,
-                            imageUrl,
-                            ...props
-                          }: ComponentProps<"div"> & {
+const LoginScreen = ({
+                              className,
+                              imageUrl,
+                              ...props
+                            }: ComponentProps<"div"> & {
   imageUrl?: string;
-}) {
+}) => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState<boolean>(false)
@@ -45,7 +45,7 @@ export function LoginForm({
         localStorage.setItem('token', data.token)
 
         // Redirigir a la página principal
-        router.push('/')
+        router.push('/splash')
       } else {
         setError(data.message || 'Ocurrió un error en el login')
       }
@@ -127,3 +127,5 @@ export function LoginForm({
     </div>
   )
 }
+
+export default LoginScreen;

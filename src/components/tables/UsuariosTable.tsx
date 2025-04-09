@@ -4,9 +4,9 @@ import {useEffect, useState} from 'react';
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Edit, Trash} from "lucide-react";
-import CrearUsuarioDialog from "../dialogs/CrearUsuarioDialog";
-import EditarUsuarioDialog from "../dialogs/EditarUsuarioDialog";
-import BorrarUsuarioDialog from "../dialogs/BorrarUsuarioDialog";
+import CrearUsuarioDialog from "../dialogs/usuarios/CrearUsuarioDialog";
+import EditarUsuarioDialog from "../dialogs/usuarios/EditarUsuarioDialog";
+import BorrarUsuarioDialog from "../dialogs/usuarios/BorrarUsuarioDialog";
 import {IUsuario} from "@/interfaces/IUsuario";
 import {toast} from 'sonner';
 

@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import { ComponentProps } from "react";
-import UserTable from "@/components/ui/users/UserTable";
+import UserTable from "@/components/tables/UserTable";
 
 const DashboardScreen = ({ className, ...props }: ComponentProps<"div">) => {
   return (

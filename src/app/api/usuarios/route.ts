@@ -14,6 +14,10 @@ const hashPassword = async (password: string): Promise<string> => {
 export async function GET(req: Request) {
   try {
     const usuarios = await prisma.usuario.findMany({
+      orderBy:
+        {
+          usuarioid: 'asc'
+        },
       select: {
         usuarioid: true,
         nombre: true,
@@ -25,7 +29,7 @@ export async function GET(req: Request) {
     });
     return NextResponse.json(usuarios);
   } catch (error) {
-    return NextResponse.json({error: 'Error fetching users'}, {status: 500});
+    return NextResponse.json({error: 'Error al obtener los usuarios'}, {status: 500});
   }
 }
 
@@ -34,8 +38,23 @@ export async function POST(req: Request) {
   try {
     const {nombre, apellido, nombreusuario, correo, password, rolid}: Usuario = await req.json();
 
+    // Validar si el nombre de usuario ya existe
+    const usuarioExistente = await prisma.usuario.findFirst({
+      where: {
+        OR: [
+          {correo: correo},
+          {nombreusuario: nombreusuario}
+        ]
+      }
+    });
+
+    if (usuarioExistente) {
+      return NextResponse.json({error: 'El correo o nombre de usuario ya está registrado.'}, {status: 400});
+    }
+
     const hashedPassword = await hashPassword(password);
 
+    // Crear el nuevo usuario
     const nuevoUsuario = await prisma.usuario.create({
       data: {
         nombre,
@@ -46,9 +65,10 @@ export async function POST(req: Request) {
         rolid,
       },
     });
+
     return NextResponse.json(nuevoUsuario, {status: 201});
   } catch (error) {
-    return NextResponse.json({error: 'Error creating user'}, {status: 500});
+    return NextResponse.json({error: 'Ocurrió un error al crear el usuario. Por favor, intente nuevamente.'}, {status: 500});
   }
 }
 
@@ -78,7 +98,7 @@ export async function PUT(req: Request) {
 
     return NextResponse.json(usuarioActualizado);
   } catch (error) {
-    return NextResponse.json({error: 'Error updating user'}, {status: 500});
+    return NextResponse.json({error: 'Ocurrió un error al actualizar el usuario. Por favor, intente nuevamente.'}, {status: 500});
   }
 }
 
@@ -91,6 +111,6 @@ export async function DELETE(req: Request) {
     });
     return NextResponse.json(usuarioEliminado);
   } catch (error) {
-    return NextResponse.json({error: 'Error deleting user'}, {status: 500});
+    return NextResponse.json({error: 'Ocurrió un error al eliminar el usuario. Por favor, intente nuevamente.'}, {status: 500});
   }
 }

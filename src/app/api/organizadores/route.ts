@@ -1,4 +1,4 @@
-import {Organizador, PrismaClient} from '@prisma/client';
+import {PrismaClient, Organizador} from '@prisma/client';
 import {NextResponse} from 'next/server';
 
 const prisma = new PrismaClient();
@@ -6,7 +6,12 @@ const prisma = new PrismaClient();
 // GET (Obtener todos los organizadores)
 export async function GET() {
   try {
-    const organizadores = await prisma.organizador.findMany();
+    const organizadores = await prisma.organizador.findMany({
+      include: {
+        usuario: true,  // Incluir detalles del usuario
+        evento: true,   // Incluir detalles del evento
+      },
+    });
     return NextResponse.json(organizadores);
   } catch (error) {
     return NextResponse.json({error: 'Error fetching organizadores'}, {status: 500});
@@ -22,6 +27,10 @@ export async function POST(req: Request) {
       data: {
         usuarioid,
         eventoid,
+      },
+      include: {
+        usuario: true,  // Incluir detalles del usuario
+        evento: true,   // Incluir detalles del evento
       },
     });
     return NextResponse.json(organizador, {status: 201});

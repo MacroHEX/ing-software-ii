@@ -8,20 +8,24 @@ import {toast} from 'sonner'
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
-import {Input} from "@/components/ui/input";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select'
+import {IUsuario} from "@/interfaces/IUsuario";
+import {IEvento} from "@/interfaces/IEvento";
 
 const CreateOrganizerFormSchema = z.object({
-  usuarioid: z.number(),
-  eventoid: z.number(),
+  usuarioid: z.number().min(1, {message: 'El usuario es requerido.'}),
+  eventoid: z.number().min(1, {message: 'El evento es requerido.'}),
 })
 
 interface CreateOrganizerDialogProps {
   isOpen: boolean
   onClose: () => void
   onCreate: (organizerData: any) => Promise<boolean>
+  usuarios: IUsuario[]
+  eventos: IEvento[]
 }
 
-const CrearOrganizadorDialog = ({isOpen, onClose, onCreate}: CreateOrganizerDialogProps) => {
+const CrearOrganizadorDialog = ({isOpen, onClose, onCreate, usuarios, eventos}: CreateOrganizerDialogProps) => {
   const form = useForm<z.infer<typeof CreateOrganizerFormSchema>>({
     resolver: zodResolver(CreateOrganizerFormSchema),
     defaultValues: {
@@ -45,6 +49,20 @@ const CrearOrganizadorDialog = ({isOpen, onClose, onCreate}: CreateOrganizerDial
     }
   }
 
+  // Evitar que los select se muestren si no hay datos disponibles
+  if (!usuarios.length || !eventos.length) {
+    return (
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="w-[500px]">
+          <DialogHeader>
+            <DialogTitle>Crear nuevo organizador</DialogTitle>
+          </DialogHeader>
+          <div className="text-center p-4">Cargando datos de usuarios y eventos...</div>
+        </DialogContent>
+      </Dialog>
+    )
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="w-[500px]">
@@ -58,9 +76,21 @@ const CrearOrganizadorDialog = ({isOpen, onClose, onCreate}: CreateOrganizerDial
               name="usuarioid"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>ID Usuario</FormLabel>
+                  <FormLabel>Usuario</FormLabel>
                   <FormControl>
-                    <Input placeholder="ID Usuario" type="number" {...field} />
+                    <Select value={field.value?.toString() ?? ''}
+                            onValueChange={(value) => field.onChange(parseInt(value))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona un usuario"/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {usuarios.map((usuario) => (
+                          <SelectItem key={usuario.usuarioid} value={usuario.usuarioid.toString()}>
+                            {usuario.nombreusuario}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage/>
                 </FormItem>
@@ -72,9 +102,21 @@ const CrearOrganizadorDialog = ({isOpen, onClose, onCreate}: CreateOrganizerDial
               name="eventoid"
               render={({field}) => (
                 <FormItem>
-                  <FormLabel>ID Evento</FormLabel>
+                  <FormLabel>Evento</FormLabel>
                   <FormControl>
-                    <Input placeholder="ID Evento" type="number" {...field} />
+                    <Select value={field.value?.toString() ?? ''}
+                            onValueChange={(value) => field.onChange(parseInt(value))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona un evento"/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {eventos.map((evento) => (
+                          <SelectItem key={evento.eventoid} value={evento.eventoid.toString()}>
+                            {evento.nombre}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage/>
                 </FormItem>

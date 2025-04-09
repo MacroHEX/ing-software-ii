@@ -4,15 +4,18 @@ import {useEffect, useState} from 'react';
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Edit, Trash} from "lucide-react";
-
 import {toast} from 'sonner';
 import {IOrganizador} from "@/interfaces/IOrganizador";
 import CrearOrganizadorDialog from "@/components/dialogs/organizadores/CrearOrganizadorDialog";
 import EditarOrganizadorDialog from "@/components/dialogs/organizadores/EditarOrganizadorDialog";
 import BorrarOrganizadorDialog from "@/components/dialogs/organizadores/BorrarOrganizadorDialog";
+import {IUsuario} from "@/interfaces/IUsuario";
+import {IEvento} from "@/interfaces/IEvento";
 
 const OrganizadoresTable = () => {
   const [organizadores, setOrganizadores] = useState<IOrganizador[]>([]);
+  const [usuarios, setUsuarios] = useState<IUsuario[]>([]);
+  const [eventos, setEventos] = useState<IEvento[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState<boolean>(false);
@@ -50,8 +53,64 @@ const OrganizadoresTable = () => {
     }
   };
 
+  const fetchUsuarios = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Token no encontrado. Por favor, inicia sesión.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/usuarios', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setUsuarios(data);
+      } else {
+        toast.error(data.error || 'Error al cargar los usuarios');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
+  const fetchEventos = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Token no encontrado. Por favor, inicia sesión.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/eventos', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setEventos(data);
+      } else {
+        toast.error(data.error || 'Error al cargar los eventos');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
   useEffect(() => {
     fetchOrganizadores().then();
+    fetchUsuarios().then();
+    fetchEventos().then();
   }, []);
 
   const handleCreateOrganizador = async (organizadorData: any) => {
@@ -183,8 +242,8 @@ const OrganizadoresTable = () => {
               organizadores.map((organizador) => (
                 <TableRow key={organizador.organizadorid}>
                   <TableCell>{organizador.organizadorid}</TableCell>
-                  <TableCell>{organizador.usuarioid}</TableCell>
-                  <TableCell>{organizador.eventoid}</TableCell>
+                  <TableCell>{organizador.usuario.nombreusuario}</TableCell>
+                  <TableCell>{organizador.evento.nombre}</TableCell>
                   <TableCell>
                     <Button
                       variant="link"
@@ -216,13 +275,26 @@ const OrganizadoresTable = () => {
       </div>
 
       {/* Diálogos */}
-      <CrearOrganizadorDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)}
-                              onCreate={handleCreateOrganizador}/>
-      <EditarOrganizadorDialog isOpen={isEditDialogOpen} onClose={() => setIsEditDialogOpen(false)}
-                               onUpdate={handleEditOrganizador}
-                               organizadorData={selectedOrganizador}/>
-      <BorrarOrganizadorDialog isOpen={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}
-                               onDelete={handleDeleteOrganizador}/>
+      <CrearOrganizadorDialog
+        isOpen={isCreateDialogOpen}
+        onClose={() => setIsCreateDialogOpen(false)}
+        onCreate={handleCreateOrganizador}
+        usuarios={usuarios}
+        eventos={eventos}
+      />
+      <EditarOrganizadorDialog
+        isOpen={isEditDialogOpen}
+        onClose={() => setIsEditDialogOpen(false)}
+        onUpdate={handleEditOrganizador}
+        organizadorData={selectedOrganizador}
+        usuarios={usuarios}
+        eventos={eventos}
+      />
+      <BorrarOrganizadorDialog
+        isOpen={isDeleteDialogOpen}
+        onClose={() => setIsDeleteDialogOpen(false)}
+        onDelete={handleDeleteOrganizador}
+      />
     </div>
   );
 };

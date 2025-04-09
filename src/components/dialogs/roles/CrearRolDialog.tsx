@@ -9,6 +9,7 @@ import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
 import {Input} from '@/components/ui/input'
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog"
+import {useEffect} from "react";
 
 const CreateRoleFormSchema = z.object({
   nombrerol: z.string().min(1, {message: 'El nombre del rol es requerido.'}),
@@ -27,6 +28,10 @@ const CrearRolDialog = ({isOpen, onClose, onCreate}: CreateRoleDialogProps) => {
       nombrerol: '',
     },
   })
+
+  useEffect(() => {
+    form.setValue('nombrerol', '')
+  }, [isOpen]);
 
   const {handleSubmit, control} = form
 

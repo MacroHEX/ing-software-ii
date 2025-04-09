@@ -1,3 +1,5 @@
+import {ITipoEvento} from "@/interfaces/ITipoEvento";
+
 export interface IEvento {
   eventoid: number;
   nombre: string;
@@ -5,7 +7,5 @@ export interface IEvento {
   ubicacion: string;
   imagen: string;
   tipoeventoid: number;
-  tipoevento: {
-    descripcion: string;
-  };
+  tipoevento: ITipoEvento;
 }

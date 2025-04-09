@@ -1,21 +1,21 @@
 'use client'
 
-import {useState, useEffect} from "react";
+import {useState} from "react";
 import {cn} from "@/lib/utils";
 import {Button} from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarFooter,
-  SidebarProvider,
-  SidebarGroupContent,
-  SidebarGroup,
-  SidebarGroupLabel
+  SidebarProvider
 } from "@/components/ui/sidebar";
-import {ChevronDown, ChevronRight, Plus, Users, FileText, Archive, Settings, Tag, ChevronLeft} from "lucide-react";
+import {Archive, ChevronLeft, ChevronRight, FileText, Plus, Settings, Tag, Users} from "lucide-react";
 import UsuariosTable from "@/components/tables/UsuariosTable";
 import EventosTable from "@/components/tables/EventosTable";
 import InscripcionesTable from "@/components/tables/InscripcionesTable";

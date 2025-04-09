@@ -1,16 +1,18 @@
 'use client'
 
-import {useEffect, useState} from 'react'
-import {zodResolver} from '@hookform/resolvers/zod'
-import {useForm} from 'react-hook-form'
-import {z} from 'zod'
-import {toast} from 'sonner'
+import {useEffect, useState} from 'react';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {toast} from 'sonner';
 
-import {Button} from '@/components/ui/button'
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
-import {Input} from '@/components/ui/input'
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog"
-import {IEvento} from "@/interfaces/IEvento"
+import {Button} from '@/components/ui/button';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
+import {Input} from '@/components/ui/input';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog';
+import {ITipoEvento} from "@/interfaces/ITipoEvento";
+import {IEvento} from "@/interfaces/IEvento";
 
 const EditEventoFormSchema = z.object({
   eventoid: z.number(),
@@ -19,68 +21,71 @@ const EditEventoFormSchema = z.object({
   ubicacion: z.string().min(1, {message: 'La ubicación es requerida.'}),
   imagen: z.string().min(1, {message: 'La imagen es requerida.'}),
   tipoeventoid: z.number().min(1, {message: 'El tipo de evento es requerido.'}),
-})
+});
 
 interface EditEventoDialogProps {
-  isOpen: boolean
-  onClose: () => void
-  onUpdate: (eventoData: any) => void
-  eventoData: IEvento | null
+  isOpen: boolean;
+  onClose: () => void;
+  onUpdate: (eventoData: any) => void;
+  eventoData: IEvento | null;
 }
 
 const EditarEventoDialog = ({isOpen, onClose, onUpdate, eventoData}: EditEventoDialogProps) => {
-  const [initialValues, setInitialValues] = useState<IEvento | null>(eventoData)
+  const [tiposDeEvento, setTiposDeEvento] = useState<ITipoEvento[]>([]);
 
   useEffect(() => {
-    if (eventoData) {
-      setInitialValues(eventoData)
-    }
-  }, [isOpen, eventoData])
+    const fetchTiposDeEvento = async () => {
+      try {
+        const response = await fetch('/api/tipoeventos');
+        if (!response.ok) {
+          throw new Error('Error fetching tipos de evento');
+        }
+        const tiposData = await response.json();
+        setTiposDeEvento(tiposData);
+      } catch (error) {
+        toast.error('Error al obtener los tipos de evento');
+      }
+    };
+
+    fetchTiposDeEvento().then();
+  }, [isOpen]);
 
   const form = useForm<z.infer<typeof EditEventoFormSchema>>({
     resolver: zodResolver(EditEventoFormSchema),
-    defaultValues: initialValues
-      ? {
-        eventoid: initialValues.eventoid,
-        nombre: initialValues.nombre,
-        fecha: initialValues.fecha.toISOString().slice(0, 16), // Convertir a formato datetime-local
-        ubicacion: initialValues.ubicacion,
-        imagen: initialValues.imagen,
-        tipoeventoid: initialValues.tipoeventoid,
-      }
-      : {
-        eventoid: 0,
-        nombre: '',
-        fecha: '',
-        ubicacion: '',
-        imagen: '',
-        tipoeventoid: 1,
-      },
-  })
+    defaultValues: {
+      eventoid: eventoData?.eventoid || 0,
+      nombre: eventoData?.nombre || '',
+      fecha: eventoData ? new Date(eventoData.fecha).toISOString().slice(0, 16) : '', // Convertir a formato datetime-local
+      ubicacion: eventoData?.ubicacion || '',
+      imagen: eventoData?.imagen || '',
+      tipoeventoid: eventoData?.tipoeventoid || 1,
+    },
+  });
 
-  const {handleSubmit, control} = form
+  const {handleSubmit, control} = form;
 
-  const handleUpdateEvento = async (data: z.infer<typeof EditEventoFormSchema>) => {
-    try {
-      onUpdate(data)
-      onClose()
-    } catch (error) {
-      toast.error('Error al actualizar el evento. Intenta nuevamente')
-    }
-  }
-
+  // Restablecer los valores del formulario cuando eventoData cambie
   useEffect(() => {
     if (eventoData) {
       form.reset({
         eventoid: eventoData.eventoid,
         nombre: eventoData.nombre,
-        fecha: eventoData.fecha.toISOString().slice(0, 16), // Convertir a formato datetime-local
+        fecha: new Date(eventoData.fecha).toISOString().slice(0, 16), // Convertir a formato datetime-local
         ubicacion: eventoData.ubicacion,
         imagen: eventoData.imagen,
         tipoeventoid: eventoData.tipoeventoid,
-      })
+      });
     }
-  }, [isOpen, eventoData, form])
+  }, [eventoData, form]);
+
+  const handleUpdateEvento = async (data: z.infer<typeof EditEventoFormSchema>) => {
+    try {
+      onUpdate(data);
+      onClose();
+    } catch (error) {
+      toast.error('Error al actualizar el evento. Intenta nuevamente');
+    }
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -153,14 +158,25 @@ const EditarEventoDialog = ({isOpen, onClose, onUpdate, eventoData}: EditEventoD
                 <FormItem>
                   <FormLabel>Tipo de Evento</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Select value={field.value?.toString() ?? ''}
+                            onValueChange={(value) => field.onChange(parseInt(value))}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecciona un tipo de evento"/>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {tiposDeEvento.map((tipo) => (
+                          <SelectItem key={tipo.tipoeventoid} value={tipo.tipoeventoid.toString()}>
+                            {tipo.descripcion}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
                   <FormMessage/>
                 </FormItem>
               )}
             />
 
-            {/* Campo oculto para eventoid */}
             <input type="hidden" {...form.register('eventoid')} />
 
             <DialogFooter>
@@ -171,7 +187,7 @@ const EditarEventoDialog = ({isOpen, onClose, onUpdate, eventoData}: EditEventoD
         </Form>
       </DialogContent>
     </Dialog>
-  )
-}
+  );
+};
 
-export default EditarEventoDialog
+export default EditarEventoDialog;

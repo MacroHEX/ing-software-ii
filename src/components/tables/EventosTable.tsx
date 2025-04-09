@@ -139,9 +139,11 @@ const EventoTable = () => {
   };
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4">Eventos</h2>
-      <Button onClick={() => setIsCreateDialogOpen(true)}>Nuevo Evento</Button>
+    <div className='flex flex-col gap-4'>
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">Eventos</h2>
+        <Button onClick={() => setIsCreateDialogOpen(true)}>Nuevo Evento</Button>
+      </div>
 
       <div className="overflow-x-auto">
         <Table className="min-w-full">

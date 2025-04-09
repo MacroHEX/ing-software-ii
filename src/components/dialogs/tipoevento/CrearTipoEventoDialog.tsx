@@ -1,6 +1,6 @@
 'use client'
 
-import {useState} from 'react'
+import {useEffect} from 'react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {useForm} from 'react-hook-form'
 import {z} from 'zod'
@@ -28,6 +28,10 @@ const CrearTipoEventoDialog = ({isOpen, onClose, onCreate}: CreateTipoEventoDial
       descripcion: '',
     },
   })
+
+  useEffect(() => {
+    form.setValue('descripcion', '')
+  }, [isOpen]);
 
   const {handleSubmit, control} = form
 

@@ -37,5 +37,5 @@ export async function middleware(req: Request) {
 
 // Configuración para las rutas a las que se aplicará el middleware
 export const config = {
-  matcher: ['/api/users/((?!general).*)', '/api/auth/((?!general).*)'],
+  matcher: ['/api/usuarios/((?!general).*)', '/api/auth/((?!general).*)'],
 };

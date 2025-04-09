@@ -4,9 +4,9 @@ import {useEffect, useState} from 'react';
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Edit, Trash} from "lucide-react";
-import CreateUserDialog from "../dialogs/CreateUserDialog";
-import EditUserDialog from "../dialogs/EditUserDialog";
-import DeleteUserDialog from "../dialogs/DeleteUserDialog";
+import CrearUsuarioDialog from "../dialogs/CrearUsuarioDialog";
+import EditarUsuarioDialog from "../dialogs/EditarUsuarioDialog";
+import BorrarUsuarioDialog from "../dialogs/BorrarUsuarioDialog";
 import {IUsuario} from "@/interfaces/IUsuario";
 import {toast} from 'sonner';
 
@@ -221,12 +221,12 @@ const UsuariosTable = () => {
       </div>
 
       {/* Diálogos */}
-      <CreateUserDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)}
-                        onCreate={handleCreateUser}/>
-      <EditUserDialog isOpen={isEditDialogOpen} onClose={() => setIsEditDialogOpen(false)} onUpdate={handleEditUser}
-                      userData={selectedUser}/>
-      <DeleteUserDialog isOpen={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}
-                        onDelete={handleDeleteUser}/>
+      <CrearUsuarioDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)}
+                          onCreate={handleCreateUser}/>
+      <EditarUsuarioDialog isOpen={isEditDialogOpen} onClose={() => setIsEditDialogOpen(false)} onUpdate={handleEditUser}
+                           userData={selectedUser}/>
+      <BorrarUsuarioDialog isOpen={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}
+                           onDelete={handleDeleteUser}/>
     </div>
   );
 };

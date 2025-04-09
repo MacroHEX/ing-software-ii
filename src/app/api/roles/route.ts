@@ -6,7 +6,11 @@ const prisma = new PrismaClient();
 // GET (Obtener todos los roles)
 export async function GET() {
   try {
-    const roles = await prisma.rol.findMany();
+    const roles = await prisma.rol.findMany({
+      orderBy: {
+        rolid: 'asc'
+      }
+    });
     return NextResponse.json(roles);
   } catch (error) {
     return NextResponse.json({error: 'Error fetching roles'}, {status: 500});

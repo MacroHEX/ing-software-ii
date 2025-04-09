@@ -8,7 +8,7 @@ export async function GET() {
   try {
     const eventos = await prisma.evento.findMany({
       include: {
-        tipoevento: true, // Incluye la relación con TipoEvento
+        tipoevento: true,
       },
     });
     return NextResponse.json(eventos);
@@ -22,13 +22,22 @@ export async function POST(req: Request) {
   const {nombre, fecha, ubicacion, imagen, tipoeventoid}: Evento = await req.json();
 
   try {
+    const parsedFecha = new Date(fecha);
+
+    if (isNaN(parsedFecha.getTime())) {
+      return NextResponse.json({error: 'Fecha inválida'}, {status: 400});
+    }
+
     const evento = await prisma.evento.create({
       data: {
         nombre,
-        fecha,
+        fecha: parsedFecha,
         ubicacion,
         imagen,
         tipoeventoid,
+      },
+      include: {
+        tipoevento: true,
       },
     });
     return NextResponse.json(evento, {status: 201});

@@ -138,9 +138,11 @@ const InscripcionesTable = () => {
   };
 
   return (
-    <div>
-      <h2 className="text-xl font-semibold mb-4">Inscripciones</h2>
-      <Button onClick={() => setIsCreateDialogOpen(true)}>Nueva Inscripción</Button>
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-between items-center">
+        <h2 className="text-xl font-semibold">Inscripciones</h2>
+        <Button onClick={() => setIsCreateDialogOpen(true)}>Nueva Inscripción</Button>
+      </div>
 
       <div className="overflow-x-auto">
         <Table className="min-w-full">

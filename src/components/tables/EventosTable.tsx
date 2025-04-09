@@ -171,6 +171,7 @@ const EventoTable = () => {
                   <TableCell>
                     <Button
                       variant="link"
+                      className='hover:text-neutral-950 cursor-pointer'
                       onClick={() => {
                         setSelectedEvento(evento);
                         setIsEditDialogOpen(true);
@@ -180,7 +181,7 @@ const EventoTable = () => {
                     </Button>
                     <Button
                       variant="link"
-                      className="text-red-500"
+                      className="text-red-500 hover:text-red-800 cursor-pointer"
                       onClick={() => {
                         setSelectedEvento(evento);
                         setIsDeleteDialogOpen(true);

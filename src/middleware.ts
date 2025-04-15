@@ -23,6 +23,11 @@ const authenticateAndAuthorize = (req: Request) => {
 
 // Middleware para todas las peticiones
 export async function middleware(req: Request) {
+  // Excluir las rutas de /auth/signup y /auth/login del middleware
+  if (req.url.includes('/auth/signup') || req.url.includes('/auth/login')) {
+    return NextResponse.next(); // Permite continuar sin autenticar
+  }
+
   const {error, status} = authenticateAndAuthorize(req);
 
   if (error) {
@@ -30,12 +35,13 @@ export async function middleware(req: Request) {
     toast.error('Token inválido o expirado. Por favor, inicie sesión nuevamente.');
 
     // Redirigir al usuario a la página de inicio
-    return NextResponse.redirect(new URL('/', req.url));  }
+    return NextResponse.redirect(new URL('/', req.url));
+  }
 
   return NextResponse.next(); // Permite continuar si es válido
 }
 
 // Configuración para las rutas a las que se aplicará el middleware
 export const config = {
-  matcher: ['/api/usuarios/((?!general).*)', '/api/auth/((?!general).*)'],
+  matcher: ['/api/usuarios/((?!general).*)', '/api/auth/((?!signup|login).*)'],
 };

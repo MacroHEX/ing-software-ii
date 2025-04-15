@@ -1,5 +1,6 @@
 'use client'
 
+import {useEffect, useState} from 'react'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {useForm} from 'react-hook-form'
 import {z} from 'zod'
@@ -7,12 +8,14 @@ import {toast} from 'sonner'
 
 import {Button} from '@/components/ui/button'
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form'
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog'
-import {Input} from "@/components/ui/input";
+import {Select, SelectContent, SelectItem} from '@/components/ui/select'
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {IUsuario} from '@/interfaces/IUsuario'
+import {IEvento} from '@/interfaces/IEvento'
 
 const CreateInscripcionFormSchema = z.object({
-  usuarioid: z.number(),
-  eventoid: z.number(),
+  usuarioid: z.number().min(1, { message: 'El usuario es requerido.' }),
+  eventoid: z.number().min(1, { message: 'El evento es requerido.' }),
 })
 
 interface CreateInscripcionDialogProps {
@@ -21,16 +24,47 @@ interface CreateInscripcionDialogProps {
   onCreate: (inscripcionData: any) => Promise<boolean>
 }
 
-const CrearInscripcionDialog = ({isOpen, onClose, onCreate}: CreateInscripcionDialogProps) => {
+const CrearInscripcionDialog = ({ isOpen, onClose, onCreate }: CreateInscripcionDialogProps) => {
+  const [usuarios, setUsuarios] = useState<IUsuario[]>([])
+  const [eventos, setEventos] = useState<IEvento[]>([])
+
+  useEffect(() => {
+    const fetchUsuarios = async () => {
+      try {
+        const response = await fetch('/api/usuarios')
+        if (!response.ok) throw new Error('Error fetching usuarios')
+        const usuariosData = await response.json()
+        // Excluir usuario con ID 1 (admin)
+        setUsuarios(usuariosData.filter((usuario: IUsuario) => usuario.usuarioid !== 1))
+      } catch (error) {
+        toast.error('Error al obtener los usuarios')
+      }
+    }
+
+    const fetchEventos = async () => {
+      try {
+        const response = await fetch('/api/eventos')
+        if (!response.ok) throw new Error('Error fetching eventos')
+        const eventosData = await response.json()
+        setEventos(eventosData)
+      } catch (error) {
+        toast.error('Error al obtener los eventos')
+      }
+    }
+
+    fetchUsuarios().then()
+    fetchEventos().then()
+  }, [])
+
   const form = useForm<z.infer<typeof CreateInscripcionFormSchema>>({
     resolver: zodResolver(CreateInscripcionFormSchema),
     defaultValues: {
-      usuarioid: 0,
-      eventoid: 0,
+      usuarioid: 1,
+      eventoid: 1,
     },
   })
 
-  const {handleSubmit, control} = form
+  const { handleSubmit, control } = form
 
   const handleCreateInscripcion = async (data: z.infer<typeof CreateInscripcionFormSchema>) => {
     try {
@@ -56,13 +90,24 @@ const CrearInscripcionDialog = ({isOpen, onClose, onCreate}: CreateInscripcionDi
             <FormField
               control={control}
               name="usuarioid"
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ID Usuario</FormLabel>
+                  <FormLabel>Usuario</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Select
+                      value={field.value?.toString() ?? ""}
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                    >
+                      <SelectContent>
+                        {usuarios.map((usuario) => (
+                          <SelectItem key={usuario.usuarioid} value={usuario.usuarioid.toString()}>
+                            {usuario.nombre} {usuario.apellido}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />
@@ -70,13 +115,24 @@ const CrearInscripcionDialog = ({isOpen, onClose, onCreate}: CreateInscripcionDi
             <FormField
               control={control}
               name="eventoid"
-              render={({field}) => (
+              render={({ field }) => (
                 <FormItem>
-                  <FormLabel>ID Evento</FormLabel>
+                  <FormLabel>Evento</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Select
+                      value={field.value?.toString() ?? ""}
+                      onValueChange={(value) => field.onChange(parseInt(value))}
+                    >
+                      <SelectContent>
+                        {eventos.map((evento) => (
+                          <SelectItem key={evento.eventoid} value={evento.eventoid.toString()}>
+                            {evento.nombre}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </FormControl>
-                  <FormMessage/>
+                  <FormMessage />
                 </FormItem>
               )}
             />

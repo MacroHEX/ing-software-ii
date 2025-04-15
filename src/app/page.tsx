@@ -1,22 +1,8 @@
 'use client'
 
-import {useEffect} from "react";
-
 import Image from "next/image";
-import {useRouter} from "next/navigation";
 
 export default function Home() {
-
-  const router = useRouter();
-
-  useEffect(() => {
-    // Verifica si el token existe en localStorage
-    const token = localStorage.getItem('token');
-    if (token) {
-      // Si el token existe, redirige a una página diferente
-      router.push('/dashboard');
-    }
-  }, [router]);
 
   return (
     <div

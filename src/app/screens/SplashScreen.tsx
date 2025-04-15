@@ -3,16 +3,44 @@
 import {useEffect, useState} from 'react'
 import {useRouter} from 'next/navigation'
 import Image from 'next/image'
+import jwt from 'jsonwebtoken'
+import {toast} from 'sonner'
 
 const SplashScreen = () => {
   const [show, setShow] = useState(true)
   const router = useRouter()
 
   useEffect(() => {
+    const token = localStorage.getItem('token')
+
+    if (token) {
+      try {
+        const decoded: any = jwt.decode(token)
+
+        console.log('TOKEN: ', decoded);
+
+        // Verificar si el rol es 1 o 2 y redirigir
+        if (decoded?.rol === 1) {
+          router.push('/dashboard')
+        } else if (decoded?.rol === 2) {
+          router.push('/user-dashboard')
+        } else {
+          toast.error('Rol no reconocido')
+          router.push('/')  // O redirigir a una página de error o login
+        }
+      } catch (error) {
+        toast.error('Error al decodificar el token')
+        router.push('/')  // O redirigir a una página de error o login
+      }
+    } else {
+      toast.error('No se encontró un token de sesión')
+      router.push('/')  // O redirigir a la página de login
+    }
+
+    // Mostrar la pantalla por un breve periodo antes de redirigir
     const timer = setTimeout(() => {
       setShow(false)
-      router.push('/dashboard')
-    }, 2500)
+    }, 1500)
 
     return () => clearTimeout(timer)
   }, [router])
@@ -39,4 +67,4 @@ const SplashScreen = () => {
   )
 }
 
-export default SplashScreen;
+export default SplashScreen

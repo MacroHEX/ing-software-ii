@@ -165,7 +165,7 @@ const RolesTable = () => {
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Roles</h2>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>Nuevo Rol</Button>
+        <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nuevo Rol</Button>
       </div>
 
       <div className="overflow-x-auto">

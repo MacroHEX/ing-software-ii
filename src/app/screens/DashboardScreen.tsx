@@ -22,12 +22,19 @@ import InscripcionesTable from "@/components/tables/InscripcionesTable";
 import OrganizadoresTable from "@/components/tables/OrganizadoresTable";
 import RolesTable from "@/components/tables/RolesTable";
 import TipoEventoTable from "@/components/tables/TipoEventoTable";
+import {useRouter} from "next/navigation";
 
 const DashboardScreen = () => {
   const [view, setView] = useState("usuarios");
   const [collapsed, setCollapsed] = useState(false);
+  const router = useRouter();
 
   const toggleSidebar = () => setCollapsed(!collapsed);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    router.push('/');
+  };
 
   const renderView = () => {
     switch (view) {
@@ -125,9 +132,8 @@ const DashboardScreen = () => {
           </SidebarContent>
           <SidebarFooter>
             <Button
-              onClick={() => {
-              }}
-              className={collapsed ? "hidden" : ""}
+              onClick={handleLogout}
+              className={collapsed ? "hidden" : "cursor-pointer"}
             >
               Cerrar sesión
             </Button>

@@ -143,7 +143,7 @@ const TipoEventoTable = () => {
     <div>
       <div className='flex flex-col justify-center items-center'>
         <h2 className="text-xl font-semibold mb-4">Tipos de Evento</h2>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>Nuevo Tipo de Evento</Button>
+        <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nuevo Tipo de Evento</Button>
       </div>
 
       <div className="overflow-x-auto">

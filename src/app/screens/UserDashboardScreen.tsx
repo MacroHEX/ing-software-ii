@@ -16,9 +16,9 @@ import {
   SidebarProvider
 } from "@/components/ui/sidebar";
 import {ChevronLeft, ChevronRight, Plus, Users} from "lucide-react";
-import UsuariosTable from "@/components/tables/UsuariosTable";
 import {useRouter} from "next/navigation";
 import UserDashboard from "@/components/UserDashboard";
+import UserProfile from "@/components/UserProfile";
 
 const UserDashboardScreen = () => {
   const [view, setView] = useState("usuarios");
@@ -35,11 +35,11 @@ const UserDashboardScreen = () => {
   const renderView = () => {
     switch (view) {
       case "perfil":
-        return <UserDashboard/>;
+        return <UserProfile/>;
       case "eventos":
         return <UserDashboard/>;
       default:
-        return <UsuariosTable/>;
+        return <UserDashboard/>;
     }
   };
 

@@ -7,6 +7,10 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const organizadores = await prisma.organizador.findMany({
+      orderBy:
+        {
+          organizadorid: 'asc'
+        },
       include: {
         usuario: true,  // Incluir detalles del usuario
         evento: true,   // Incluir detalles del evento

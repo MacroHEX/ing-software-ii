@@ -7,6 +7,10 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const eventos = await prisma.evento.findMany({
+      orderBy:
+        {
+          eventoid: 'asc'
+        },
       include: {
         tipoevento: true,
       },
@@ -51,14 +55,23 @@ export async function PUT(req: Request) {
   const {eventoid, nombre, fecha, ubicacion, imagen, tipoeventoid}: Evento = await req.json();
 
   try {
+    const parsedFecha = new Date(fecha);
+
+    if (isNaN(parsedFecha.getTime())) {
+      return NextResponse.json({error: 'Fecha inválida'}, {status: 400});
+    }
+
     const updatedEvento = await prisma.evento.update({
       where: {eventoid},
       data: {
         nombre,
-        fecha,
+        fecha: parsedFecha,
         ubicacion,
         imagen,
         tipoeventoid,
+      },
+      include: {
+        tipoevento: true,
       },
     });
     return NextResponse.json(updatedEvento);

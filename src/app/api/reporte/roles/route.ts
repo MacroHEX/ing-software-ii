@@ -1,8 +1,8 @@
 // src/app/api/reporte/roles/route.ts
 
-import { PrismaClient } from '@prisma/client';
+import {PrismaClient} from '@prisma/client';
 import puppeteer from 'puppeteer';
-import { NextResponse } from 'next/server';
+import {NextResponse} from 'next/server';
 
 const prisma = new PrismaClient();
 
@@ -14,8 +14,7 @@ export async function GET() {
       },
     });
 
-    // Obtener la fecha y hora con la zona horaria de São Paulo (UTC-3)
-    const fechaHoraGeneracion = new Date().toLocaleString('es-BR', {
+    const fechaHoraGeneracion = new Date().toLocaleString('es-PY', {
       timeZone: 'America/Sao_Paulo',
     });
 
@@ -63,7 +62,7 @@ export async function GET() {
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
-      margin: { top: 30, right: 30, bottom: 60, left: 30 },
+      margin: {top: 30, right: 30, bottom: 60, left: 30},
     });
 
     await browser.close();
@@ -78,6 +77,6 @@ export async function GET() {
     });
   } catch (error) {
     console.error('Error generando el reporte:', error);
-    return new NextResponse('Error generando el reporte', { status: 500 });
+    return new NextResponse('Error generando el reporte', {status: 500});
   }
 }

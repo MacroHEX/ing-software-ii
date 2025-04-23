@@ -3,7 +3,7 @@
 import {useEffect, useState} from 'react';
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {Trash} from "lucide-react";
+import {Edit, Trash} from "lucide-react";
 import {toast} from 'sonner';
 import {IInscripcion} from "@/interfaces/IInscripcion";
 import CrearInscripcionDialog from "@/components/dialogs/inscripciones/CrearInscripcionDialog";
@@ -175,7 +175,7 @@ const InscripcionesTable = () => {
         <h2 className="text-xl font-semibold">Inscripciones</h2>
         <div className="flex gap-4">
           <Button variant='outline' onClick={handleGenerateReport}>Generar Reporte</Button>
-          <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nueva Inscripción</Button>
+          {/*<Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nueva Inscripción</Button>*/}
         </div>
       </div>
 
@@ -211,7 +211,7 @@ const InscripcionesTable = () => {
                         setIsEditDialogOpen(true);
                       }}
                     >
-                      Editar
+                      <Edit size={20}/>
                     </Button>
                     <Button
                       variant="link"

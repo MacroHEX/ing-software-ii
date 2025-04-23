@@ -74,14 +74,23 @@ const EventoTable = () => {
       return;
     }
 
+    // Verificar que tipoeventoid esté presente
+    if (!eventoData.tipoeventoid) {
+      toast.error('Debe seleccionar un tipo de evento válido');
+      return;
+    }
+
     try {
+      // Realizar la solicitud PUT para actualizar el evento
       const response = await fetch('/api/eventos', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(eventoData),
+        body: JSON.stringify({
+          ...eventoData,
+        }),
       });
 
       const data = await response.json();
@@ -94,7 +103,6 @@ const EventoTable = () => {
         );
         toast.success('Evento actualizado con éxito');
         setIsEditDialogOpen(false);
-        return;
       } else {
         toast.error(data.error || 'Error al actualizar el evento');
       }

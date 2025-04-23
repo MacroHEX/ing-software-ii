@@ -156,11 +156,46 @@ const UsuariosTable = () => {
     }
   };
 
+  const handleGenerateReport = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Token no encontrado. Por favor, inicia sesión.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/reporte-usuarios', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'reporte_usuarios.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } else {
+        toast.error('Error al generar el reporte');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Usuarios</h2>
-        <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nuevo Usuario</Button>
+        <div className="flex gap-4">
+          <Button variant='outline' onClick={handleGenerateReport}>Generar Reporte</Button>
+          <Button onClick={() => setIsCreateDialogOpen(true)}>Nuevo Usuario</Button>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -223,7 +258,8 @@ const UsuariosTable = () => {
       {/* Diálogos */}
       <CrearUsuarioDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)}
                           onCreate={handleCreateUser}/>
-      <EditarUsuarioDialog isOpen={isEditDialogOpen} onClose={() => setIsEditDialogOpen(false)} onUpdate={handleEditUser}
+      <EditarUsuarioDialog isOpen={isEditDialogOpen} onClose={() => setIsEditDialogOpen(false)}
+                           onUpdate={handleEditUser}
                            userData={selectedUser}/>
       <BorrarUsuarioDialog isOpen={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}
                            onDelete={handleDeleteUser}/>

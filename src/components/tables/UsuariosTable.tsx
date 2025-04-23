@@ -164,7 +164,7 @@ const UsuariosTable = () => {
     }
 
     try {
-      const response = await fetch('/api/reporte-usuarios', {
+      const response = await fetch('/api/reporte/usuarios', {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`,

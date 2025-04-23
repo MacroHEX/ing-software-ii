@@ -138,11 +138,46 @@ const EventoTable = () => {
     }
   };
 
+  const handleGenerateReport = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Token no encontrado. Por favor, inicia sesión.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/reporte/eventos', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'reporte_eventos.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } else {
+        toast.error('Error al generar el reporte');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
   return (
     <div className='flex flex-col gap-4'>
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Eventos</h2>
-        <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nuevo Evento</Button>
+        <div className="flex gap-4">
+          <Button variant='outline' onClick={handleGenerateReport}>Generar Reporte</Button>
+          <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nuevo Evento</Button>
+        </div>
       </div>
 
       <div className="overflow-x-auto">

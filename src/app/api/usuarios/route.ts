@@ -14,6 +14,11 @@ const hashPassword = async (password: string): Promise<string> => {
 export async function GET(req: Request) {
   try {
     const usuarios = await prisma.usuario.findMany({
+      where: {
+        usuarioid: {
+          not: 1,
+        }
+      },
       orderBy:
         {
           usuarioid: 'asc'

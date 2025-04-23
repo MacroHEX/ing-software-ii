@@ -1,8 +1,8 @@
 'use client'
 
 import {useEffect, useState} from 'react';
-import {Button} from '@/components/ui/button'; // Asegúrate de que el botón sea el de ShadCN
-import {Card, CardContent, CardHeader} from '@/components/ui/card'; // Utilizamos el componente Card de ShadCN
+import {Button} from '@/components/ui/button';
+import {Card, CardContent, CardHeader} from '@/components/ui/card';
 
 export default function UserProfile() {
   const [userData, setUserData] = useState<any>(null);
@@ -13,7 +13,6 @@ export default function UserProfile() {
     if (token) {
       const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificar el token JWT
       console.log(decodedToken)
-      // Hacer una llamada API para obtener los datos del usuario (esto puede ser ajustado a tu endpoint)
       fetch(`/api/usuarios/${decodedToken.id}`)
         .then((response) => response.json())
         .then((data) => setUserData(data))
@@ -27,7 +26,6 @@ export default function UserProfile() {
 
   return (
     <div className="flex flex-col items-center justify-center p-6 gap-6">
-      {/* Cuadro con los datos del usuario */}
       <Card className="w-full sm:w-96">
         <CardHeader>
           <h2 className="text-xl font-semibold">Perfil de Usuario</h2>

@@ -139,11 +139,46 @@ const TipoEventoTable = () => {
     }
   };
 
+  const handleGenerateReport = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Token no encontrado. Por favor, inicia sesión.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/reporte/tipoeventos', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'reporte_tipo_eventos.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } else {
+        toast.error('Error al generar el reporte');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
   return (
     <div>
       <div className='flex flex-col justify-center items-center'>
         <h2 className="text-xl font-semibold mb-4">Tipos de Evento</h2>
-        <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nuevo Tipo de Evento</Button>
+        <div className="flex gap-4">
+          <Button variant='outline' onClick={handleGenerateReport}>Generar Reporte</Button>
+          <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nuevo Tipo de Evento</Button>
+        </div>
       </div>
 
       <div className="overflow-x-auto">

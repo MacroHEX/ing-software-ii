@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect, useState } from 'react';
+import {useEffect, useState} from 'react';
 
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {Button} from "@/components/ui/button";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
-import { Edit, Trash } from "lucide-react";
+import {Edit, Trash} from "lucide-react";
 
-import { toast } from 'sonner';
+import {toast} from 'sonner';
 
 import CrearRolDialog from "@/components/dialogs/roles/CrearRolDialog";
 
@@ -142,7 +142,7 @@ const RolesTable = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ rolid: selectedRole.rolid }),
+        body: JSON.stringify({rolid: selectedRole.rolid}),
       });
 
       const data = await response.json();
@@ -161,11 +161,46 @@ const RolesTable = () => {
     }
   };
 
+  const handleGenerateReport = async () => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      toast.error('Token no encontrado. Por favor, inicia sesión.');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/reporte/roles', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+        },
+      });
+
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'reporte_roles.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } else {
+        toast.error('Error al generar el reporte');
+      }
+    } catch (error) {
+      toast.error('Error de conexión');
+    }
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Roles</h2>
-        <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nuevo Rol</Button>
+        <div className="flex gap-4">
+          <Button variant='outline' onClick={handleGenerateReport}>Generar Reporte</Button>
+          <Button className='cursor-pointer' onClick={() => setIsCreateDialogOpen(true)}>Nuevo Rol</Button>
+        </div>
       </div>
 
       <div className="overflow-x-auto">
@@ -219,11 +254,11 @@ const RolesTable = () => {
 
       {/* Diálogos */}
       <CrearRolDialog isOpen={isCreateDialogOpen} onClose={() => setIsCreateDialogOpen(false)}
-                      onCreate={handleCreateRole} />
+                      onCreate={handleCreateRole}/>
       <EditarRolDialog isOpen={isEditDialogOpen} onClose={() => setIsEditDialogOpen(false)} onUpdate={handleEditRole}
-                       roleData={selectedRole} />
+                       roleData={selectedRole}/>
       <BorrarRolDialog isOpen={isDeleteDialogOpen} onClose={() => setIsDeleteDialogOpen(false)}
-                       onDelete={handleDeleteRole} />
+                       onDelete={handleDeleteRole}/>
     </div>
   );
 };

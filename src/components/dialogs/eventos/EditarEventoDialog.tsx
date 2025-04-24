@@ -55,7 +55,14 @@ const EditarEventoDialog = ({isOpen, onClose, onUpdate, eventoData}: EditEventoD
     defaultValues: {
       eventoid: eventoData?.eventoid || 0,
       nombre: eventoData?.nombre || '',
-      fecha: eventoData ? new Date(eventoData.fecha).toISOString().slice(0, 16) : '', // Convertir a formato datetime-local
+      fecha: eventoData
+        ? (() => {
+          const fecha = new Date(eventoData.fecha);
+          const offset = -3; // GMT-3
+          fecha.setHours(fecha.getHours() + offset);
+          return fecha.toISOString().slice(0, 16);
+        })()
+        : '',
       ubicacion: eventoData?.ubicacion || '',
       imagen: eventoData?.imagen || '',
       tipoeventoid: eventoData?.tipoeventoid || 1,
@@ -70,7 +77,14 @@ const EditarEventoDialog = ({isOpen, onClose, onUpdate, eventoData}: EditEventoD
       form.reset({
         eventoid: eventoData.eventoid,
         nombre: eventoData.nombre,
-        fecha: new Date(eventoData.fecha).toISOString().slice(0, 16), // Convertir a formato datetime-local
+        fecha: eventoData
+          ? (() => {
+            const fecha = new Date(eventoData.fecha);
+            const offset = -3; // GMT-3
+            fecha.setHours(fecha.getHours() + offset);
+            return fecha.toISOString().slice(0, 16);
+          })()
+          : '',
         ubicacion: eventoData.ubicacion,
         imagen: eventoData.imagen,
         tipoeventoid: eventoData.tipoeventoid,

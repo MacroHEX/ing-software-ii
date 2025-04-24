@@ -1,7 +1,6 @@
 'use client'
 
 import {useEffect, useState} from 'react';
-import {Button} from '@/components/ui/button';
 import {Card, CardContent, CardHeader} from '@/components/ui/card';
 
 export default function UserProfile() {
@@ -49,15 +48,15 @@ export default function UserProfile() {
               <span>{userData.rolid === 1 ? 'Administrador' : 'Usuario'}</span>
             </div>
           </div>
-          <div className="mt-6 flex justify-center">
-            <Button
-              variant="outline"
-              className="w-full sm:w-auto"
-              onClick={() => alert('Funcionalidad de edición próximamente')}
-            >
-              Editar Perfil
-            </Button>
-          </div>
+          {/*<div className="mt-6 flex justify-center">*/}
+          {/*  <Button*/}
+          {/*    variant="outline"*/}
+          {/*    className="w-full sm:w-auto"*/}
+          {/*    onClick={() => alert('Funcionalidad de edición próximamente')}*/}
+          {/*  >*/}
+          {/*    Editar Perfil*/}
+          {/*  </Button>*/}
+          {/*</div>*/}
         </CardContent>
       </Card>
     </div>

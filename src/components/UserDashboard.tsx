@@ -8,15 +8,27 @@ export default function UserDashboard() {
   const [eventCount, setEventCount] = useState<number>(0);
 
   useEffect(() => {
-    // Obtener los datos del token desde localStorage
     const token = localStorage.getItem('token');
     if (token) {
-      const decodedToken = JSON.parse(atob(token.split('.')[1])); // Decodificar el token JWT
-      setUserName(decodedToken.nombreusuario);
-    }
+      try {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        const userId = decoded.id;
+        setUserName(decoded.nombreusuario);
 
-    // Simular la obtención de eventos pendientes (puedes reemplazar con tu lógica real)
-    setEventCount(5); // Ejemplo: Asumiendo que el usuario tiene 5 eventos pendientes
+        // Obtener todas las inscripciones y contar las del usuario actual
+        fetch('/api/inscripciones')
+          .then(res => res.json())
+          .then(data => {
+            const userInscripciones = data.filter((i: any) => i.usuarioid === userId);
+            setEventCount(userInscripciones.length);
+          })
+          .catch(err => {
+            console.error('Error al obtener inscripciones:', err);
+          });
+      } catch (error) {
+        console.error('Error al decodificar token:', error);
+      }
+    }
   }, []);
 
   return (
@@ -35,7 +47,7 @@ export default function UserDashboard() {
           ¡Bienvenido, {userName}!
         </h1>
         <p className="text-muted-foreground">
-          Tienes {eventCount} eventos pendientes.
+          Tienes {eventCount} evento{eventCount !== 1 ? 's' : ''} pendiente{eventCount !== 1 ? 's' : ''}.
         </p>
       </header>
 

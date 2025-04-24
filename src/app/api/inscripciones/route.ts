@@ -8,10 +8,13 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const inscripciones = await prisma.inscripcion.findMany({
-      orderBy:
-        {
-          inscripcionid: 'asc'
-        },
+      include: {
+        usuario: true,
+        evento: true
+      },
+      orderBy: {
+        inscripcionid: 'asc',
+      },
     });
     return NextResponse.json(inscripciones);
   } catch (error) {

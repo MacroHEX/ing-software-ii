@@ -19,6 +19,7 @@ import {ChevronLeft, ChevronRight, Plus, Users} from "lucide-react";
 import {useRouter} from "next/navigation";
 import UserDashboard from "@/components/UserDashboard";
 import UserProfile from "@/components/UserProfile";
+import EventosDashboard from "@/components/EventosDashboard";
 
 const UserDashboardScreen = () => {
   const [view, setView] = useState("usuarios");
@@ -37,7 +38,7 @@ const UserDashboardScreen = () => {
       case "perfil":
         return <UserProfile/>;
       case "eventos":
-        return <UserDashboard/>;
+        return <EventosDashboard/>;
       default:
         return <UserDashboard/>;
     }

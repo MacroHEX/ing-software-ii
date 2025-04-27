@@ -203,16 +203,16 @@ const InscripcionesTable = () => {
                   <TableCell>{inscripcion.evento.nombre}</TableCell>
                   <TableCell>{new Date(inscripcion.fechainscripcion).toLocaleString()}</TableCell>
                   <TableCell>
-                    <Button
-                      variant="link"
-                      className='hover:text-neutral-950 cursor-pointer'
-                      onClick={() => {
-                        setSelectedInscripcion(inscripcion);
-                        setIsEditDialogOpen(true);
-                      }}
-                    >
-                      <Edit size={20}/>
-                    </Button>
+                    {/*<Button*/}
+                    {/*  variant="link"*/}
+                    {/*  className='hover:text-neutral-950 cursor-pointer'*/}
+                    {/*  onClick={() => {*/}
+                    {/*    setSelectedInscripcion(inscripcion);*/}
+                    {/*    setIsEditDialogOpen(true);*/}
+                    {/*  }}*/}
+                    {/*>*/}
+                    {/*  <Edit size={20}/>*/}
+                    {/*</Button>*/}
                     <Button
                       variant="link"
                       className="text-red-500 hover:text-red-800 cursor-pointer"
